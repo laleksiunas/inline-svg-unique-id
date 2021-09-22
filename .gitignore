@@ -102,3 +102,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+# JetBrains files
+.idea
+
+#MacOS files
+**/.DS_*
