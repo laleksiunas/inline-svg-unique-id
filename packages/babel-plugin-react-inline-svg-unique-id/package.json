@@ -25,6 +25,9 @@
     "build": "babel -d lib --ignore \"**/*.spec.js\" src",
     "prepublishOnly": "yarn run build"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "bugs": {
     "url": "https://github.com/laleksiunas/inline-svg-unique-id/issues"
   },
