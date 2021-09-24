@@ -108,3 +108,5 @@ dist
 
 #MacOS files
 **/.DS_*
+
+packages/**/lib/

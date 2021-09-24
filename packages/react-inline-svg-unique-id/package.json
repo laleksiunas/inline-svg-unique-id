@@ -1,0 +1,37 @@
+{
+  "name": "@inline-svg-unique-id/react",
+  "version": "1.0.0",
+  "description": "React unique inline SVG components ID generator utils",
+  "author": "Laurynas Aleksiūnas <laurynas.aleksiunas@gmail.com>",
+  "homepage": "https://github.com/laleksiunas/inline-svg-unique-id/packages/react-inline-svg-unique-id",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laleksiunas/inline-svg-unique-id.git"
+  },
+  "scripts": {
+    "prebuild": "rm -rf lib/",
+    "build": "babel -d lib --ignore \"**/*.spec.js\" src && cp ./src/index.d.ts ./lib/index.d.ts",
+    "prepublishOnly": "yarn run build"
+  },
+  "bugs": {
+    "url": "https://github.com/laleksiunas/inline-svg-unique-id/issues"
+  },
+  "peerDependencies": {
+    "react": "^17.0.0"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "7.14.5",
+    "@types/react": "^17.0.24",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}
