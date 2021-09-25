@@ -3,12 +3,12 @@
   "version": "1.1.0",
   "description": "Babel plugin for applying generated ids to inline React SVG components",
   "author": "Laurynas Aleksiūnas <laurynas.aleksiunas@gmail.com>",
-  "homepage": "https://github.com/laleksiunas/inline-svg-unique-id/packages/babel-plugin-react-inline-svg-unique-id",
+  "homepage": "https://github.com/laleksiunas/inline-svg-unique-id/",
   "license": "MIT",
   "main": "lib/index.js",
   "directories": {
     "lib": "lib",
-    "test": "__tests__"
+    "test": "./src/__tests__"
   },
   "keywords": [
     "babel-plugin"
