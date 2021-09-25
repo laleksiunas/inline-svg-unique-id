@@ -23,7 +23,8 @@
   "scripts": {
     "prebuild": "rm -rf lib/",
     "build": "babel -d lib --ignore \"**/*.spec.js\" src",
-    "prepublishOnly": "yarn run build"
+    "prepublishOnly": "yarn run build",
+    "test": "jest"
   },
   "publishConfig": {
     "access": "public"
