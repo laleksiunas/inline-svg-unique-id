@@ -1,6 +1,6 @@
 {
   "name": "@inline-svg-unique-id/react",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "React unique inline SVG components ID generator utils",
   "author": "Laurynas Aleksiūnas <laurynas.aleksiunas@gmail.com>",
   "homepage": "https://github.com/laleksiunas/inline-svg-unique-id/packages/react-inline-svg-unique-id",
