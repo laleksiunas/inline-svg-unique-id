@@ -6,8 +6,10 @@ const idGeneratorHookName = 'useUniqueInlineId';
 
 const idAttributeName = 'id';
 
-// Matches SVG IRI: url(#example)
-const iriRegex = 'url\\(#([a-zA-Z][\\w:.-]*)\\)';
+const idRegex = '#([a-zA-Z][\\w:.-]*)'; // Matches ID: #example
+const idExactMatchRegex = new RegExp(`^${idRegex}$`);
+
+const iriRegex = `url\\(${idRegex}\\)`; // Matches SVG IRI: url(#example)
 const iriExactMatchRegex = new RegExp(`^${iriRegex}$`);
 const iriGlobalMatchRegex = new RegExp(iriRegex, 'g');
 
@@ -28,6 +30,8 @@ const isSvgPath = (path) => isSvgComponentPath(path, svgIdentifiers.svg);
 const isDefsPath = (path) => isSvgComponentPath(path, svgIdentifiers.defs);
 
 const isStylePath = (path) => isSvgComponentPath(path, svgIdentifiers.style);
+
+const isIdAttribute = (attribute) => attribute.get('name').isJSXIdentifier({ name: idAttributeName });
 
 const isStringLiteralAttribute = (attribute) => attribute.get('value').isStringLiteral();
 
@@ -53,6 +57,8 @@ const createIdValuesContainer = (createIdIdentifier) => {
     getIdentifiers: () => Array.from(idIdentifierByIdValueMap.values()),
   };
 };
+
+const buildIdExpression = template.expression('`#${%%idIdentifier%%}`');
 
 const buildIriUrlExpression = template.expression(`\`${createIriUrl('${%%idIdentifier%%}')}\``);
 
@@ -84,9 +90,29 @@ const plugin = ({ types: t }) => {
         typeof stylesOrIdIdentifier === 'string' ? t.stringLiteral(stylesOrIdIdentifier) : stylesOrIdIdentifier,
       );
 
-  const svgDefsElementsVisitor = {
+  const jsxAttributeValue = (value) => t.jsxExpressionContainer(value);
+
+  const updateAttributeIdReference = ({ attribute, idValueRegex, valueBuilder, idValuesContainer }) => {
+    if (!isStringLiteralAttribute(attribute)) {
+      return;
+    }
+
+    const idValueMatches = attribute.node.value.value.match(idValueRegex);
+
+    if (!idValueMatches) {
+      return;
+    }
+
+    const idIdentifier = idValuesContainer.getIdIdentifier(idValueMatches[1]);
+
+    if (idIdentifier) {
+      attribute.get('value').replaceWith(jsxAttributeValue(valueBuilder({ idIdentifier })));
+    }
+  };
+
+  const svgDefsElementsIdIdentifiersCreatorVisitor = {
     JSXOpeningElement(path, state) {
-      const idAttribute = path.get('attributes').find((a) => a.get('name').isJSXIdentifier({ name: idAttributeName }));
+      const idAttribute = path.get('attributes').find(isIdAttribute);
 
       if (!idAttribute || !isStringLiteralAttribute(idAttribute)) {
         return;
@@ -94,21 +120,35 @@ const plugin = ({ types: t }) => {
 
       const newIdIdentifier = state.idValuesContainer.createIdIdentifier(idAttribute.node.value.value);
 
-      idAttribute.replaceWith(
-        t.jsxAttribute(t.jsxIdentifier(idAttributeName), t.jsxExpressionContainer(newIdIdentifier)),
-      );
+      idAttribute.get('value').replaceWith(jsxAttributeValue(newIdIdentifier));
+    },
+  };
+
+  const svgDefsElementsAttributesMapperVisitor = {
+    JSXOpeningElement(path, state) {
+      path.get('attributes').forEach((attribute) => {
+        if (!isIdAttribute(attribute)) {
+          updateAttributeIdReference({
+            attribute,
+            valueBuilder: buildIdExpression,
+            idValueRegex: idExactMatchRegex,
+            idValuesContainer: state.idValuesContainer,
+          });
+        }
+      });
     },
   };
 
   const svgDefsVisitor = {
     JSXElement(path, state) {
       if (isDefsPath(path)) {
-        path.traverse(svgDefsElementsVisitor, state);
+        path.traverse(svgDefsElementsIdIdentifiersCreatorVisitor, state);
+        path.traverse(svgDefsElementsAttributesMapperVisitor, state);
       }
     },
   };
 
-  const styleTagsVisitor = {
+  const styleTagsUpdateVisitor = {
     StringLiteral(path, state) {
       const stylesString = path.node.value;
       const iriMatches = new Set(Array.from(stylesString.matchAll(iriGlobalMatchRegex)).map((x) => x[1]));
@@ -132,34 +172,18 @@ const plugin = ({ types: t }) => {
   const svgElementsVisitor = {
     JSXElement(path, state) {
       if (isStylePath(path)) {
-        path.traverse(styleTagsVisitor, state);
+        path.traverse(styleTagsUpdateVisitor, state);
       }
     },
     JSXOpeningElement(path, state) {
-      path.get('attributes').forEach((attribute) => {
-        if (!isStringLiteralAttribute(attribute)) {
-          return;
-        }
-
-        const attributeValue = attribute.node.value.value;
-        const iriMatches = attributeValue.match(iriExactMatchRegex);
-
-        if (!iriMatches) {
-          return;
-        }
-
-        const currentIdValue = iriMatches[1];
-        const idIdentifier = state.idValuesContainer.getIdIdentifier(currentIdValue);
-
-        if (idIdentifier) {
-          attribute.replaceWith(
-            t.jsxAttribute(
-              t.jsxIdentifier(attribute.node.name.name),
-              t.jsxExpressionContainer(buildIriUrlExpression({ idIdentifier })),
-            ),
-          );
-        }
-      });
+      path.get('attributes').forEach((attribute) =>
+        updateAttributeIdReference({
+          attribute,
+          valueBuilder: buildIriUrlExpression,
+          idValueRegex: iriExactMatchRegex,
+          idValuesContainer: state.idValuesContainer,
+        }),
+      );
     },
   };
 
