@@ -48,8 +48,10 @@ const Icon = () => {
 
 ### Installation
 
-_npm install @inline-svg-unique-id/react_\
-_npm install --save-dev babel-plugin-react-inline-svg-unique-id_
+```shell
+$ npm install @inline-svg-unique-id/react
+$ npm install --save-dev babel-plugin-react-inline-svg-unique-id
+```
 
 ### Usage
 
