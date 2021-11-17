@@ -74,7 +74,7 @@ For more information refer to SVGR transforms [documentation](https://react-svgr
 Wrap your application in the generation context provider:
 
 ```jsx
-import { Provider as UniqueSvgIdProvider } from '@inline-svg-unique-id/react';
+import { Provider as UniqueIdGeneratorProvider } from '@inline-svg-unique-id/react';
 
 const YourApp = () => (
   <UniqueIdGeneratorProvider>
@@ -89,7 +89,7 @@ Wrap your application in the generation context provider and specify _idPrefix_ 
 is evaluated once and will not change during sequential rerenders.
 
 ```jsx
-import { Provider as UniqueSvgIdProvider } from '@inline-svg-unique-id/react';
+import { Provider as UniqueIdGeneratorProvider } from '@inline-svg-unique-id/react';
 
 const YourApp = () => (
   <UniqueIdGeneratorProvider idPrefix="custom-prefix">
@@ -101,7 +101,7 @@ const YourApp = () => (
 It is also possible to nest providers and have different prefixes for separate branches.
 
 ```jsx
-import { Provider as UniqueSvgIdProvider } from '@inline-svg-unique-id/react';
+import { Provider as UniqueIdGeneratorProvider } from '@inline-svg-unique-id/react';
 
 const YourApp = () => (
   <UniqueIdGeneratorProvider idPrefix="id">
