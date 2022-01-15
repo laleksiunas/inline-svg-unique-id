@@ -37,6 +37,14 @@ const isStringLiteralAttribute = (attribute) => attribute.get('value').isStringL
 
 const createIriUrl = (id) => `url(#${id})`;
 
+const isXlinkHrefAttribute = (attribute) => {
+  const nameNode = attribute.get('name');
+
+  return (
+    nameNode.isJSXNamespacedName() && nameNode.node.namespace.name === 'xlink' && nameNode.node.name.name === 'href'
+  );
+};
+
 const createIdValuesContainer = (createIdIdentifier) => {
   const idIdentifierByIdValueMap = new Map();
 
@@ -176,14 +184,23 @@ const plugin = ({ types: t }) => {
       }
     },
     JSXOpeningElement(path, state) {
-      path.get('attributes').forEach((attribute) =>
+      path.get('attributes').forEach((attribute) => {
         updateAttributeIdReference({
           attribute,
           valueBuilder: buildIriUrlExpression,
           idValueRegex: iriExactMatchRegex,
           idValuesContainer: state.idValuesContainer,
-        }),
-      );
+        });
+
+        if (isXlinkHrefAttribute(attribute)) {
+          updateAttributeIdReference({
+            attribute,
+            valueBuilder: buildIdExpression,
+            idValueRegex: idExactMatchRegex,
+            idValuesContainer: state.idValuesContainer,
+          });
+        }
+      });
     },
   };
 
