@@ -330,6 +330,7 @@ pluginTester({
               </linearGradient>
             </defs>
             <ellipse cx="200" cy="70" rx="85" ry="55" fill="url(#grad1)" xlink:href="#grad1" />
+            <ellipse cx="200" cy="70" rx="85" ry="55" fill="url(#grad1)" xlinkHref="#grad1" />
           </svg>
         );
       `,
@@ -348,6 +349,7 @@ pluginTester({
                 </linearGradient>
               </defs>
               <ellipse cx="200" cy="70" rx="85" ry="55" fill={\`url(#\${_id})\`} xlink:href={\`#\${_id}\`} />
+              <ellipse cx="200" cy="70" rx="85" ry="55" fill={\`url(#\${_id})\`} xlinkHref={\`#\${_id}\`} />
             </svg>
           );
         };

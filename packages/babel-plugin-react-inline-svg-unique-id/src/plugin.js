@@ -41,7 +41,8 @@ const isXlinkHrefAttribute = (attribute) => {
   const nameNode = attribute.get('name');
 
   return (
-    nameNode.isJSXNamespacedName() && nameNode.node.namespace.name === 'xlink' && nameNode.node.name.name === 'href'
+    nameNode.isJSXIdentifier({ name: 'xlinkHref' }) ||
+    (nameNode.isJSXNamespacedName() && nameNode.node.namespace.name === 'xlink' && nameNode.node.name.name === 'href')
   );
 };
 
