@@ -29,7 +29,7 @@
     "url": "https://github.com/laleksiunas/inline-svg-unique-id/issues"
   },
   "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0"
+    "react": "^16.8.3 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
     "@babel/preset-react": "7.14.5",
