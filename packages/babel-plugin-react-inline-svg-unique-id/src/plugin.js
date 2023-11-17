@@ -148,12 +148,10 @@ const plugin = ({ types: t }) => {
     },
   };
 
-  const svgDefsVisitor = {
+  const svgElementsReplaceIdValuesVisitor = {
     JSXElement(path, state) {
-      if (isDefsPath(path)) {
-        path.traverse(svgDefsElementsIdIdentifiersCreatorVisitor, state);
-        path.traverse(svgDefsElementsAttributesMapperVisitor, state);
-      }
+      path.traverse(svgDefsElementsIdIdentifiersCreatorVisitor, state);
+      path.traverse(svgDefsElementsAttributesMapperVisitor, state);
     },
   };
 
@@ -178,7 +176,7 @@ const plugin = ({ types: t }) => {
     },
   };
 
-  const svgElementsVisitor = {
+  const svgElementsReplaceIdReferencesVisitor = {
     JSXElement(path, state) {
       if (isStylePath(path)) {
         path.traverse(styleTagsUpdateVisitor, state);
@@ -208,8 +206,8 @@ const plugin = ({ types: t }) => {
   const renderedJsxVisitor = {
     JSXElement(path, state) {
       if (isSvgPath(path)) {
-        path.traverse(svgDefsVisitor, state);
-        path.traverse(svgElementsVisitor, state);
+        path.traverse(svgElementsReplaceIdValuesVisitor, state);
+        path.traverse(svgElementsReplaceIdReferencesVisitor, state);
       }
     },
   };
