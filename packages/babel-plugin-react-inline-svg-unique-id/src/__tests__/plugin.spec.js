@@ -465,5 +465,43 @@ pluginTester({
         };
       `,
     },
+    'uses a custom id generator hook': {
+      pluginOptions: {
+        idGeneratorLibraryName: 'react',
+        idGeneratorHookName: 'useId',
+      },
+      code: `
+        const Icon = () => (
+          <svg height="150" width="400">
+            <defs>
+              <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
+                <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <ellipse cx="200" cy="70" rx="85" ry="55" fill="url(#grad1)" />
+          </svg>
+        );
+      `,
+      output: `
+        import { useId } from 'react';
+
+        const Icon = function () {
+          const _id = useId();
+
+          return (
+            <svg height="150" width="400">
+              <defs>
+                <linearGradient id={_id} x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <ellipse cx="200" cy="70" rx="85" ry="55" fill={\`url(#\${_id})\`} />
+            </svg>
+          );
+        };
+      `,
+    },
   },
 });

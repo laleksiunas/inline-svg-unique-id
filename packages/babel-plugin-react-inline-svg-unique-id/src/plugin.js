@@ -1,9 +1,6 @@
 import template from '@babel/template';
 import jsxSyntaxPlugin from '@babel/plugin-syntax-jsx';
 
-const idGeneratorLibraryName = '@inline-svg-unique-id/react';
-const idGeneratorHookName = 'useUniqueInlineId';
-
 const idAttributeName = 'id';
 
 const idRegex = '#([a-zA-Z][\\w:.-]*)'; // Matches ID: #example
@@ -71,13 +68,15 @@ const buildIdExpression = template.expression('`#${%%idIdentifier%%}`');
 
 const buildIriUrlExpression = template.expression(`\`${createIriUrl('${%%idIdentifier%%}')}\``);
 
-const buildIdGeneratorHookImportStatement = template(
-  `import { ${idGeneratorHookName} } from '${idGeneratorLibraryName}';`,
-);
+const plugin = ({ types: t }, options) => {
+  const { idGeneratorLibraryName = '@inline-svg-unique-id/react', idGeneratorHookName = 'useUniqueInlineId' } = options;
 
-const buildIdIdentifierGeneratorStatement = template(`const %%idIdentifier%% = ${idGeneratorHookName}();`);
+  const buildIdGeneratorHookImportStatement = template(
+    `import { ${idGeneratorHookName} } from '${idGeneratorLibraryName}';`,
+  );
 
-const plugin = ({ types: t }) => {
+  const buildIdIdentifierGeneratorStatement = template(`const %%idIdentifier%% = ${idGeneratorHookName}();`);
+
   const splitStylesStringByIriToLiterals = (stylesString, idValuesWithIdentifiers) =>
     idValuesWithIdentifiers
       .reduce(
