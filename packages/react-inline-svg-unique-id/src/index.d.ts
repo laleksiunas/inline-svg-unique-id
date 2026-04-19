@@ -1,5 +1,5 @@
 declare module '@inline-svg-unique-id/react' {
-  import type { FC } from 'react';
+  import type { FC, PropsWithChildren } from 'react';
 
   export interface ProviderProps {
     idPrefix?: string;
@@ -7,5 +7,5 @@ declare module '@inline-svg-unique-id/react' {
 
   export function useUniqueInlineId(): string;
 
-  export const Provider: FC<ProviderProps>;
+  export const Provider: FC<PropsWithChildren<ProviderProps>>;
 }
